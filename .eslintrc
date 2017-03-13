@@ -1,0 +1,31 @@
+{
+  "extends": [
+    "kentcdodds",
+    "plugin:flowtype/recommended"
+  ],
+  "plugins": [
+    "react",
+    "flowtype"
+  ],
+  "rules": {
+    "no-duplicate-imports": 0,
+    "babel/new-cap": 0,
+    "func-style": 0,
+    "semi": [2, "never"],
+    "no-unexpected-multiline": 2,
+    "linebreak-style": 0,
+    "import/no-unassigned-import": 0,
+    "react/jsx-uses-react": 2,
+    "react/jsx-uses-vars": 2,
+    "class-methods-use-this": 0,
+    "no-invalid-this": 0,
+    "babel/no-invalid-this": 2,
+    "no-unused-vars": 0,
+    "valid-jsdoc": 0,
+    "no-console": 0,
+  },
+  "env": {
+    "jest": true,
+    "browser": true
+  }
+}
