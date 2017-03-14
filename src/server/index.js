@@ -1,4 +1,4 @@
-import {Server} from 'http'
+import http from 'http'
 import compression from 'compression'
 import express from 'express'
 import socketIO from 'socket.io'
@@ -11,10 +11,8 @@ import renderApp from './render-app'
 import setUpSocket from './socket'
 
 const app = express()
-
-
-// flow-disable-next-line
-// const http = Server(app)
+const server = http.createServer(app)
+const io = socketIO(server)
 
 app.use(compression())
 app.use(STATIC_PATH, express.static('dist'))
@@ -25,10 +23,9 @@ app.get('/', (req, res) => {
   res.send(renderApp(APP_NAME))
 })
 
-const server = app.listen(WEB_PORT, () => {
+server.listen(WEB_PORT, () => {
   console.log(`Server running on port ${WEB_PORT} ${isProd ? '(production)' :
   '(development).\nKeep "yarn dev:wds" running in an other terminal'}.`)
 })
 
-const io = socketIO.listen(server)
 setUpSocket(io)

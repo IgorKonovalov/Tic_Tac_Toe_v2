@@ -1,30 +1,4 @@
-const blankBoard = [
-  ['', '', ''],
-  ['', '', ''],
-  ['', '', '']]
-
-const players = {
-  one: {
-    id: 1,
-    char: 'X',
-    message: 'First player won!'},
-  two: {
-    id: 2,
-    char: 'O',
-    message: 'Second player won!'}}
-
-// data structure for storing:
-//
-// gameBoardStore = {
-//   roomCode: {
-//     gameBoard: gameBoard,
-//     player1: socket1,
-//     player2: socket2,
-//     playerTurn: 1/2
-//   }
-// }
-
-const gameBoardStore = {}
+// @flow
 
 // logic for checking board for win/draft is simple - instead of many tests on one array,
 // we transpose board array, including diagonals to match only rows
@@ -67,6 +41,34 @@ function rowContainsChar(character, board) {
            })
 }
 
+const blankBoard = [
+  ['', '', ''],
+  ['', '', ''],
+  ['', '', '']]
+
+const players = {
+  one: {
+    id: 1,
+    char: 'X',
+    message: 'First player won!'},
+  two: {
+    id: 2,
+    char: 'O',
+    message: 'Second player won!'}}
+
+const gameBoardStore = {}
+
+// data structure for storing:
+//
+// gameBoardStore = {
+//   roomCode: {
+//     gameBoard: gameBoard,
+//     player1: socket1,
+//     player2: socket2,
+//     playerTurn: 1/2
+//   }
+// }
+
 // final check returns winning/draw message and gamestate: false for triggering end of game
 
 function checkWin(board) {
@@ -80,13 +82,14 @@ function checkWin(board) {
 }
 
 const setUpSocket = (io: Object) => {
-  io.on('connect', socket => {
+  io.on('connection', socket => {
     console.log('[socket.io] A client connected.')
-    socket.on('create room', roomCode => {
+    socket.on('create room', (roomCode: number) => {
       if (roomCode) {
         const playerOne = socket.id
         console.log('creating room')
         delete gameBoardStore[roomCode]
+        gameBoardStore[roomCode] = {}
         gameBoardStore[roomCode].gameBoard = [
           ['', '', ''],
           ['', '', ''],
@@ -96,25 +99,22 @@ const setUpSocket = (io: Object) => {
         console.log(roomCode)
         console.log('all rooms', gameBoardStore)
         console.log('board of new room', gameBoardStore[roomCode])
-        console.log('sending room')
         io.in(roomCode).emit('room created', true)
       }
     })
 
     // connecting player to room (using roomCode given bu host player)
 
-    socket.on('join room', roomCode => {
-        // Check if room is in the data list.
+    socket.on('join room', (roomCode: number) => {
       if (gameBoardStore.hasOwnProperty(roomCode)) {
-        // Check for socket.id of players is not same
-        if (socket.id !== gameBoardStore[roomCode].player1) {
-          console.log('second player joined')
-          // Присоединяем второго игрока.
+        if (socket.id !== gameBoardStore[roomCode].player1 && !gameBoardStore[roomCode].player2) {
           const playerTwo = socket.id
           gameBoardStore[roomCode].player2 = playerTwo
           console.log('now with second player: ', gameBoardStore[roomCode])
           socket.join(roomCode)
           io.in(roomCode).emit('game start', 'haha')
+        } else {
+          console.log('the room is full!')
         }
       } else {
         console.log('There is no such room in room list')
@@ -125,8 +125,8 @@ const setUpSocket = (io: Object) => {
 
     socket.on('click', data => {
       if (data.gameCode in gameBoardStore) {
-        const playerTurn = data.value === players.one.char ? 2 : 1
 
+        const playerTurn = data.value === players.one.char ? 2 : 1
         gameBoardStore[data.gameCode].gameBoard[data.row][data.col] = data.value
 
         const dataObject = {
@@ -165,7 +165,7 @@ const setUpSocket = (io: Object) => {
         }
       })
     })
-
+    
     socket.on('reset board', data => {
       gameBoardStore[data.gameCode] = blankBoard
     })
