@@ -11,22 +11,17 @@ import {createStore, combineReducers} from 'redux'
 import {APP_CONTAINER_SELECTOR} from '../shared/config'
 import {isProd} from '../shared/util'
 import App from './app.jsx'
-import helloReducer from './reducer/hello'
 import setUpSocket from './socket'
 
-const store = createStore(combineReducers({hello: helloReducer}),
-  isProd ? undefined : window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__())
 
 const rootEl = document.querySelector(APP_CONTAINER_SELECTOR)
 
-const wrapApp = (AppComponent, reduxStore) =>
-  <Provider store={reduxStore}>
-    <AppContainer>
-      <AppComponent />
-    </AppContainer>
-  </Provider>
+const wrapApp = AppComponent =>
+  <AppContainer>
+    <AppComponent />
+  </AppContainer>
 
-ReactDOM.render(wrapApp(App, store), rootEl)
+ReactDOM.render(wrapApp(App), rootEl)
 
 
 if (module.hot) {
@@ -34,8 +29,6 @@ if (module.hot) {
   module.hot.accept('./app', () => {
     // eslint-disable-next-line global-require
     const NextApp = require('./app').default
-    ReactDOM.render(wrapApp(NextApp, store), rootEl)
+    ReactDOM.render(wrapApp(NextApp), rootEl)
   })
 }
-
-setUpSocket(store)

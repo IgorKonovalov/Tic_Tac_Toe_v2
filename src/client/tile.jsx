@@ -1,9 +1,6 @@
 import React, {Component} from 'react'
 import io from 'socket.io-client'
 import styled from 'styled-components'
-import Sound from 'react-sound'
-
-
 
 export default class Tile extends Component {
   constructor(props) {
@@ -13,8 +10,7 @@ export default class Tile extends Component {
       playerValue: props.playerValue,
       col: props.col,
       row: props.row,
-      gameCode: props.gameCode,
-      sound: false}
+      gameCode: props.gameCode}
     this.clickTile = this.clickTile.bind(this)
   }
 
@@ -24,23 +20,10 @@ export default class Tile extends Component {
   }
 
   clickTile() {
-
-    console.log('player num', this.props.playerNum)
-    console.log('player turn', this.props.playerTurn)
-    console.log('row', this.state.row)
-    console.log('col', this.state.col)
-    console.log('gamecode', this.state.gameCode)
-
+    
     if (this.props.value === '') {
-      if (this.props.playerNum === this.props.playerTurn) {
-        this.state.sound =
-          <Sound
-            url="./sound/click.mp3"
-            playStatus={Sound.status.PLAYING}
-            playFromPosition={0}
-            onLoading={this.handleSongLoading}
-            onPlaying={this.handleSongPlaying}
-            onFinishedPlaying={this.handleSongFinishedPlaying} />
+      // eslint-disable-next-line
+      if (this.props.playerNum == this.props.playerTurn) {
         this.setState({
           value: this.state.playerValue})
         this.state.socket.emit('click', {

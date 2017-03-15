@@ -1,7 +1,6 @@
 import React, {Component} from 'react'
 import io from 'socket.io-client'
 import styled from 'styled-components'
-import Sound from 'react-sound'
 import Tile from './tile.jsx'
 
 export default class Board extends Component {
@@ -9,6 +8,7 @@ export default class Board extends Component {
   constructor(props) {
     super(props)
     this.state = {
+      gameBoard: [['', '', ''], ['', '', ''], ['', '', '']],
       gameCode: props.gameCode,
       socket: props.socket,
       playerTurn: '1',
@@ -45,7 +45,7 @@ export default class Board extends Component {
         gameCode={this.state.gameCode}
         playerValue={this.props.playerValue}
         value={value}
-        playerNum = {this.props.playerNum}
+        playerNum={this.props.playerNum}
         playerTurn={this.state.playerTurn}
         />
         )
@@ -61,39 +61,23 @@ export default class Board extends Component {
       (this.state.message === 'First player won!' && this.props.playerValue === 'X') ||
       (this.state.message === 'Second player won!' && this.props.playerValue === 'O')) {
       message = 'You won!'
-      this.state.sound =
-        <Sound
-          url="./sound/won.mp3"
-          playStatus={Sound.status.PLAYING}
-          playFromPosition={0}
-          onLoading={this.handleSongLoading}
-          onPlaying={this.handleSongPlaying}
-          onFinishedPlaying={this.handleSongFinishedPlaying} />
     } else if (
       (this.state.message === 'First player won!' && this.props.playerValue === 'O') ||
       (this.state.message === 'Second player won!' && this.props.playerValue === 'X')) {
       message = 'You lost!'
-      this.state.sound =
-        <Sound
-          url="./sound/loose.mp3"
-          playStatus={Sound.status.PLAYING}
-          playFromPosition={0}
-          onLoading={this.handleSongLoading}
-          onPlaying={this.handleSongPlaying}
-          onFinishedPlaying={this.handleSongFinishedPlaying} />
     } else if (this.state.message === 'Draw!') {
       message = 'It\'s a draw!'
     }
     return (
       <Container>
         {this.state.sound}
-      <Label>
-        Room Code: {this.state.gameCode}
-      </Label>
-      <Label>
-        {message}
-      </Label>
-      {this.renderBoard()}
+        <Label>
+          Room Code: {this.state.gameCode}
+        </Label>
+        <Label>
+          {message}
+        </Label>
+        {this.renderBoard()}
       </Container>
     )
   }
