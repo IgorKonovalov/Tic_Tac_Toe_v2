@@ -6,7 +6,6 @@ import bodyParser from 'body-parser'
 
 import {APP_NAME, STATIC_PATH, WEB_PORT} from '../shared/config'
 import {isProd} from '../shared/util'
-import {helloEndpointRoute} from '../shared/routes'
 import renderApp from './render-app'
 import setUpSocket from './socket'
 
