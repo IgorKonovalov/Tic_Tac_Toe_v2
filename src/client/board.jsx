@@ -1,10 +1,11 @@
-import React, {Component} from 'react'
+import React, {PropTypes, Component} from 'react'
 import io from 'socket.io-client'
 import styled from 'styled-components'
+import {baseColor, hoverColor} from '../shared/cssvars'
 import Tile from './tile.jsx'
 
-export default class Board extends Component {
 
+export default class Board extends Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -38,15 +39,15 @@ export default class Board extends Component {
         const coord = colIndex.toString() + rowIndex.toString()
         return (
         <Tile
-        key={coord}
-        socket={this.state.socket}
-        row={rowIndex}
-        col={colIndex}
-        gameCode={this.state.gameCode}
-        playerValue={this.props.playerValue}
-        value={value}
-        playerNum={this.props.playerNum}
-        playerTurn={this.state.playerTurn}
+          key={coord}
+          socket={this.state.socket}
+          row={rowIndex}
+          col={colIndex}
+          gameCode={this.state.gameCode}
+          playerValue={this.props.playerValue}
+          value={value}
+          playerNum={this.props.playerNum}
+          playerTurn={this.state.playerTurn}
         />
         )
       })
@@ -90,7 +91,7 @@ const Label = styled.label`
   margin-bottom: .3em;
   margin-top: .3em;
   text-align: center;
-  color: #1a237e;
+  color: ${baseColor};
 `
 
 const Container = styled.div`

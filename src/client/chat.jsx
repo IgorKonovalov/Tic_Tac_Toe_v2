@@ -1,7 +1,9 @@
-import React, {Component} from 'react'
+import React, {PropTypes, Component} from 'react'
 import ReactDOM from 'react-dom'
 import io from 'socket.io-client'
 import styled from 'styled-components'
+import {baseColor, hoverColor} from '../shared/cssvars'
+
 
 
 export default class Chat extends Component {
@@ -28,7 +30,7 @@ export default class Chat extends Component {
       const message = {
         gameCode: this.state.gameCode,
         body,
-        from: this.state.name || 'Me',
+        from: this.state.name || this.state.socket.id.slice(0, 5),
         playerValue: this.state.playerValue}
       this.setState({messages: [message, ...this.state.messages]})
       this.state.socket.emit('message', message)
@@ -42,7 +44,10 @@ export default class Chat extends Component {
     })
     return (
       <Container>
-        <Input type="text" placeholder="type a message..." onKeyUp={this.handleSubmit} />
+        <Input
+          type="text"
+          placeholder="type a message..."
+          onKeyUp={this.handleSubmit} />
         {messages}
       </Container>
     )
@@ -61,8 +66,8 @@ const Input = styled.input`
   margin-right: 0.5rem;
   margin-bottom: 0.3em;
   border: none;
-  background-color: #e8eaf6;
-  color: #1a237e;
+  background-color: ${hoverColor};
+  color: ${baseColor};
 `
 
 const Label = styled.label`
@@ -72,10 +77,10 @@ const Label = styled.label`
   margin-bottom: 1em;
   margin-top: 1em;
   text-align: center;
-  color: #1a237e;
+  color: ${baseColor};
 `
 
 
 const B = styled.b`
-  color: #1a237e;
+  color: ${baseColor};
 `

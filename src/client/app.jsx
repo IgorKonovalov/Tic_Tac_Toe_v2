@@ -1,7 +1,8 @@
-import React, {Component} from 'react'
+import React, {PropTypes, Component} from 'react'
 import ReactDOM from 'react-dom'
 import io from 'socket.io-client'
 import styled, {keyframes} from 'styled-components'
+import {baseColor, hoverColor} from '../shared/cssvars'
 import Board from './board.jsx'
 import Chat from './chat.jsx'
 
@@ -173,12 +174,12 @@ const fadeIn = keyframes`
 const Form = styled.form`
   display: flex;
   flex-flow: row wrap;
-  border: 0.1em solid #1a237e;
+  border: 0.1em solid ${baseColor};
   padding: 2em;
   max-width: 40em;
   margin: 10em auto;
   border-radius: 3px;
-  box-shadow: 2px 2px 4px -2px #1a237e;
+  box-shadow: 2px 2px 4px -2px ${baseColor};
   animation: ${fadeIn} 1s linear;
 `
 
@@ -189,8 +190,8 @@ const Input = styled.input`
   margin-right: 0.5rem;
   margin-bottom: 0.2em;
   border: none;
-  background-color: #e8eaf6;
-  color: #1a237e;
+  background-color: ${hoverColor};
+  color: ${baseColor};
 `
 
 const Label = styled.label`
@@ -200,7 +201,7 @@ const Label = styled.label`
   margin-bottom: 1em;
   margin-top: 1em;
   text-align: center;
-  color: #1a237e;
+  color: ${baseColor};
 `
 
 const Button = styled.button`
@@ -212,17 +213,17 @@ const Button = styled.button`
   border: none;
   outline: none;
   cursor: pointer;
-  background-color: #e8eaf6;
+  background-color: ${hoverColor};
   box-shadow: 1px 1px 1px -1px #7986cb;
-  color: #1a237e;
+  color: ${baseColor};
   &:hover {
     background-color: #3f51b5;
-    color: #e8eaf6;
-    box-shadow: 2px 2px 2px #1a237e;
+    color: ${hoverColor};
+    box-shadow: 2px 2px 2px ${baseColor};
   }
   &:active {
     background-color: #283593;
-    color: #e8eaf6;
+    color: ${hoverColor};
   }
 `
 

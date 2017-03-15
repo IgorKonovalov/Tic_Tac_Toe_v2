@@ -165,7 +165,7 @@ const setUpSocket = (io: Object) => {
         }
       })
     })
-    
+
     socket.on('reset board', data => {
       gameBoardStore[data.gameCode] = blankBoard
     })
@@ -173,9 +173,6 @@ const setUpSocket = (io: Object) => {
     // Chat functionality
 
     socket.on('message', data => {
-      if (data.from === 'Me') {
-        data.from = socket.id
-      }
       socket.broadcast.to(data.gameCode).emit('message', {
         playerValue: data.playerValue,
         body: data.body,

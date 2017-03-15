@@ -5,8 +5,6 @@ import 'babel-polyfill'
 import React from 'react'
 import ReactDOM from 'react-dom'
 import {AppContainer} from 'react-hot-loader'
-import {Provider} from 'react-redux'
-import {createStore, combineReducers} from 'redux'
 
 import {APP_CONTAINER_SELECTOR} from '../shared/config'
 import {isProd} from '../shared/util'
