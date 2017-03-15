@@ -12,9 +12,9 @@ export default class Board extends Component {
       gameBoard: [['', '', ''], ['', '', ''], ['', '', '']],
       gameCode: props.gameCode,
       socket: props.socket,
-      playerTurn: '1',
-      sound: false}
+      playerTurn: '1'}
     this.renderBoard = this.renderBoard.bind(this)
+    this.handleReset = this.handleReset.bind(this)
   }
 
   componentDidMount() {
@@ -25,13 +25,18 @@ export default class Board extends Component {
     })
 
     this.state.socket.on('game end', data => {
-      // When game is ended, changing playerTurn to 0, so no player can make a move
       this.setState({
         playerTurn: 0,
         message: data})
     })
   }
 
+  handleReset() {
+    this.setState({
+      message: '',
+    })
+    this.props.socket.emit('reset board', this.props.gameCode)
+  }
 
   renderBoard() {
     return this.state.gameBoard.map((rows, rowIndex) => {
@@ -51,8 +56,7 @@ export default class Board extends Component {
         />
         )
       })
-
-      return <RowContainer key={rowIndex} >{row}</RowContainer>
+      return <RowContainer key={rowIndex}>{row}</RowContainer>
     })
   }
   // eslint-disable-next-line
@@ -66,12 +70,9 @@ export default class Board extends Component {
       (this.state.message === 'First player won!' && this.props.playerValue === 'O') ||
       (this.state.message === 'Second player won!' && this.props.playerValue === 'X')) {
       message = 'You lost!'
-    } else if (this.state.message === 'Draw!') {
-      message = 'It\'s a draw!'
     }
     return (
       <Container>
-        {this.state.sound}
         <Label>
           Room Code: {this.state.gameCode}
         </Label>
@@ -79,6 +80,7 @@ export default class Board extends Component {
           {message}
         </Label>
         {this.renderBoard()}
+        <Button onClick={this.handleReset}>RESET BOARD</Button>
       </Container>
     )
   }
@@ -107,4 +109,26 @@ const RowContainer = styled.div`
   width: 450px;
   flex-direction: row;
   align-items: center;
+`
+const Button = styled.button`
+  padding: 0.5em 1.2em;
+  margin-bottom: 0.2em;
+  font-size: 1.5em;
+  flex-grow: 1;
+  border-radius: 2px;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  background-color: ${hoverColor};
+  box-shadow: 1px 1px 1px -1px #7986cb;
+  color: ${baseColor};
+  &:hover {
+    background-color: #3f51b5;
+    color: ${hoverColor};
+    box-shadow: 2px 2px 2px ${baseColor};
+  }
+  &:active {
+    background-color: #283593;
+    color: ${hoverColor};
+  }
 `

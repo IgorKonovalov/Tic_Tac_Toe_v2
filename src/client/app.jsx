@@ -21,7 +21,8 @@ class App extends Component {
       playerNum: '',
       gameCode: '',
       playerName: '',
-      nameSubmitted: false}
+      nameSubmitted: false,
+      created: false}
     this.handleChangeName = this.handleChangeName.bind(this)
     this.handleSubmitName = this.handleSubmitName.bind(this)
     this.handleSubmitGame = this.handleSubmitGame.bind(this)
@@ -40,9 +41,6 @@ class App extends Component {
       console.log('игра стартовала')
       this.setState({gameCode: this.state.createCode})
       this.setState({start: true})
-    })
-    this.socket.on('game end', () => {
-      this.socket.emit('reset board', this.state)
     })
   }
 
@@ -73,7 +71,8 @@ class App extends Component {
       playerValue: 'X',
       playerNum: 1,
       createCode: roomCode,
-      player: 1})
+      player: 1,
+      created: true})
     this.socket.emit('create room', roomCode)
   }
 
@@ -89,7 +88,7 @@ class App extends Component {
     })
   }
 
-
+  // eslint-disable-next-line
   render() {
     let showRoom, showNameInput, showCreateRoom, showGameAndChat
     if (this.state.createCode !== '' && !this.state.start) {
@@ -109,15 +108,15 @@ class App extends Component {
             placeholder={'Your name'}
             value={this.state.playerName}
             onChange={this.handleChangeName} />
-          <Button type="submit">Suubmit</Button>
+          <Button type="submit">Submit</Button>
         </Form>
     }
-    if (!this.state.start && this.state.nameSubmitted) {
+    if (!this.state.start && this.state.nameSubmitted && !this.state.created) {
       showCreateRoom =
         <div>
           <Form onSubmit={this.handleSubmitGame}>
             <Button onClick={this.createRoom}>Create Game Room</Button>
-            <Label>{showRoom}</Label>
+            <Label></Label>
             <Input
               type="text"
               placeholder="Insert code here..."
@@ -126,6 +125,9 @@ class App extends Component {
             <Button type={'submit'} onClick={this.joinRoom}>Join Game</Button>
           </Form>
         </div>
+    } else if (!this.state.start && this.state.nameSubmitted && this.state.created) {
+      showCreateRoom =
+        <Form><Label>{showRoom}</Label></Form>
     }
     if (this.state.start) {
       showGameAndChat =
@@ -152,7 +154,6 @@ class App extends Component {
     <div>
       {showNameInput}
       {showCreateRoom}
-      {showRoom}
       {showGameAndChat}
     </div>
     )

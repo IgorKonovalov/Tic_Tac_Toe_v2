@@ -110,9 +110,12 @@ const setUpSocket = (io: Object) => {
         if (socket.id !== gameBoardStore[roomCode].player1 && !gameBoardStore[roomCode].player2) {
           const playerTwo = socket.id
           gameBoardStore[roomCode].player2 = playerTwo
-          console.log('now with second player: ', gameBoardStore[roomCode])
           socket.join(roomCode)
           io.in(roomCode).emit('game start', 'haha')
+          io.in(roomCode).emit('message', {
+            playerValue: '',
+            body: 'Second Player Connected',
+            from: 'SERVER'})
         } else {
           console.log('the room is full!')
         }
@@ -125,28 +128,40 @@ const setUpSocket = (io: Object) => {
 
     socket.on('click', data => {
       if (data.gameCode in gameBoardStore) {
-
-        const playerTurn = data.value === players.one.char ? 2 : 1
-        gameBoardStore[data.gameCode].gameBoard[data.row][data.col] = data.value
-
+        const playerTurn = data.playerValue === players.one.char ? 2 : 1
+        gameBoardStore[data.gameCode].gameBoard[data.row][data.col] = data.playerValue
         const dataObject = {
           gameBoard: gameBoardStore[data.gameCode].gameBoard,
           playerTurn}
-
-        console.log('Sending for update: ', dataObject)
         io.in(data.gameCode).emit('update board', dataObject)
-
         const winResult = checkWin(gameBoardStore[data.gameCode].gameBoard)
-
         if (!winResult.gameState) {
-          gameBoardStore[data.gameCode].gameBoard[data.row][data.col] = blankBoard
           io.to(data.gameCode).emit('game end', winResult.message)
+          io.in(data.gameCode).emit('message', {
+            playerValue: '',
+            body: winResult.message,
+            from: 'SERVER'})
         }
       } else {
         console.log('room is absent, try reloading page')
       }
     })
 
+    socket.on('reset board', gameCode => {
+      console.log(gameBoardStore)
+      gameBoardStore[gameCode].gameBoard = [
+        ['', '', ''],
+        ['', '', ''],
+        ['', '', '']]
+      const dataObject = {
+        gameBoard: gameBoardStore[gameCode].gameBoard,
+        playerTurn: 2}
+      io.in(gameCode).emit('update board', dataObject)
+      io.in(gameCode).emit('message', {
+        playerValue: '',
+        body: 'Board Reseted',
+        from: 'SERVER'})
+    })
 
     // removing room if client have lost connection
 
@@ -158,16 +173,16 @@ const setUpSocket = (io: Object) => {
             gameBoard: blankBoard,
             playerTurn: 0}
           io.in(gameCode).emit('game end', 'Second player is disconnected')
+          io.in(gameCode).emit('message', {
+            playerValue: '',
+            body: 'Second player is disconnected',
+            from: 'SERVER'})
           io.in(gameCode).emit('update board', dataObject)
           delete gameBoardStore[gameCode]
           console.log('room ', gameCode, ' deleted')
           console.log(gameBoardStore)
         }
       })
-    })
-
-    socket.on('reset board', data => {
-      gameBoardStore[data.gameCode] = blankBoard
     })
 
     // Chat functionality

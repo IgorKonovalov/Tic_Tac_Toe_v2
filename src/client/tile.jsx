@@ -6,19 +6,14 @@ import {tileHeight, tileWidth} from '../shared/cssvars'
 export default class Tile extends Component {
   constructor(props) {
     super(props)
-    this.state = {socket: props.socket}
     this.clickTile = this.clickTile.bind(this)
   }
 
   clickTile() {
     if (this.props.value === '') {
-      // eslint-disable-next-line
-      if (this.props.playerNum == this.props.playerTurn) {
-        this.props.socket.emit('click', {
-          gameCode: this.props.gameCode,
-          row: this.props.row,
-          col: this.props.col,
-          value: this.props.playerValue})
+      const {gameCode, row, col, playerValue, playerTurn, playerNum} = this.props
+      if (playerNum === Number(playerTurn)) {
+        this.props.socket.emit('click', {gameCode, row, col, playerValue})
       } else {
         console.log('cannot press')
       }

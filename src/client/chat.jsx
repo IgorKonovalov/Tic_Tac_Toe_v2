@@ -40,7 +40,9 @@ export default class Chat extends Component {
 
   render() {
     const messages = this.state.messages.map((message, index) => {
-      return <li key={index}>{message.playerValue}: <B>{message.from} </B>: {message.body}</li>
+      return <li key={index}>{message.playerValue}:
+        {message.from === 'SERVER' ? <SERVERB>{message.from} </SERVERB> : <B>{message.from} </B>}:
+        {message.body}</li>
     })
     return (
       <Container>
@@ -79,8 +81,9 @@ const Label = styled.label`
   text-align: center;
   color: ${baseColor};
 `
-
-
+const SERVERB = styled.b`
+  color: rgb(255,0,0);
+`
 const B = styled.b`
   color: ${baseColor};
 `
